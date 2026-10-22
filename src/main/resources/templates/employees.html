@@ -1,0 +1,280 @@
+
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Employee Management System</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f2f5f9;
+            margin: 0;
+            padding: 30px;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: auto;
+        }
+
+        h1, h2 {
+            color: #17365d;
+        }
+
+        .card {
+            background: white;
+            padding: 25px;
+            margin-bottom: 25px;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px #00000012;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: bold;
+        }
+
+        input, select {
+            width: 100%;
+            box-sizing: border-box;
+            padding: 11px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        button, .edit-btn {
+            border: none;
+            border-radius: 5px;
+            padding: 10px 16px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .save-btn {
+            background: #1769aa;
+            color: white;
+            margin-top: 20px;
+        }
+
+        .edit-btn {
+            background: #f0ad4e;
+            color: #222;
+        }
+
+        .delete-btn {
+            background: #dc3545;
+            color: white;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+
+        th {
+            background: #17365d;
+            color: white;
+        }
+
+        tr:nth-child(even) {
+            background: #f7f9fc;
+        }
+
+        .error {
+            color: #d00000;
+            font-size: 13px;
+            display: block;
+            margin-top: 5px;
+        }
+
+        .success {
+            color: #176b35;
+            background: #e2f5e8;
+            padding: 12px;
+            margin-bottom: 15px;
+            border-radius: 5px;
+        }
+
+        .actions {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        @media (max-width: 700px) {
+            body {
+                padding: 12px;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .table-wrapper {
+                overflow-x: auto;
+            }
+        }
+    </style>
+</head>
+
+<body>
+<div class="container">
+
+    <h1>Employee Management System</h1>
+    <p>Add, view, edit and delete employee records.</p>
+
+    <div class="card">
+        <h2>Add New Employee</h2>
+
+        <div class="success" th:if="${success}"
+             th:text="${success}"></div>
+
+        <form th:action="@{/employees}"
+              th:object="${employee}"
+              method="post">
+
+            <div class="form-grid">
+
+                <div>
+                    <label for="fullName">Full Name</label>
+                    <input type="text" id="fullName"
+                           th:field="*{fullName}"
+                           placeholder="Enter full name">
+                    <span class="error"
+                          th:if="${#fields.hasErrors('fullName')}"
+                          th:errors="*{fullName}"></span>
+                </div>
+
+                <div>
+                    <label for="email">Email</label>
+                    <input type="email" id="email"
+                           th:field="*{email}"
+                           placeholder="Enter email">
+                    <span class="error"
+                          th:if="${#fields.hasErrors('email')}"
+                          th:errors="*{email}"></span>
+                </div>
+
+                <div>
+                    <label for="phone">Phone Number</label>
+                    <input type="text" id="phone"
+                           th:field="*{phone}"
+                           placeholder="10-digit phone number">
+                    <span class="error"
+                          th:if="${#fields.hasErrors('phone')}"
+                          th:errors="*{phone}"></span>
+                </div>
+
+                <div>
+                    <label for="department">Department</label>
+                    <select id="department" th:field="*{department}">
+                        <option value="">Select Department</option>
+                        <option value="HR">HR</option>
+                        <option value="IT">IT</option>
+                        <option value="Finance">Finance</option>
+                        <option value="Marketing">Marketing</option>
+                        <option value="Sales">Sales</option>
+                        <option value="Operations">Operations</option>
+                    </select>
+                    <span class="error"
+                          th:if="${#fields.hasErrors('department')}"
+                          th:errors="*{department}"></span>
+                </div>
+
+                <div>
+                    <label for="salary">Salary</label>
+                    <input type="number" id="salary"
+                           th:field="*{salary}"
+                           min="0.01" step="0.01"
+                           placeholder="Enter salary">
+                    <span class="error"
+                          th:if="${#fields.hasErrors('salary')}"
+                          th:errors="*{salary}"></span>
+                </div>
+
+            </div>
+
+            <button type="submit" class="save-btn">
+                Save Employee
+            </button>
+        </form>
+    </div>
+
+    <div class="card">
+        <h2>Employee List</h2>
+
+        <p>
+            Total Employees:
+            <strong th:text="${#lists.size(employees)}">0</strong>
+        </p>
+
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Full Name</th>
+                    <th>Email</th>
+                    <th>Phone</th>
+                    <th>Department</th>
+                    <th>Salary</th>
+                    <th>Actions</th>
+                </tr>
+                </thead>
+
+                <tbody>
+                <tr th:each="emp : ${employees}">
+                    <td th:text="${emp.id}"></td>
+                    <td th:text="${emp.fullName}"></td>
+                    <td th:text="${emp.email}"></td>
+                    <td th:text="${emp.phone}"></td>
+                    <td th:text="${emp.department}"></td>
+                    <td th:text="${emp.salary}"></td>
+
+                    <td>
+                        <div class="actions">
+                            <a class="edit-btn"
+                               th:href="@{/employees/{id}/edit(id=${emp.id})}">
+                                Edit
+                            </a>
+
+                            <form th:action="@{/employees/{id}/delete(id=${emp.id})}"
+                                  method="post"
+                                  onsubmit="return confirm('Delete this employee?');">
+                                <button type="submit" class="delete-btn">
+                                    Delete
+                                </button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+
+                <tr th:if="${#lists.isEmpty(employees)}">
+                    <td colspan="7">No employees found.</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
+</body>
+</html>

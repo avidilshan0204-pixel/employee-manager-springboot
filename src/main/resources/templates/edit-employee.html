@@ -1,0 +1,137 @@
+
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Employee</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f2f5f9;
+            margin: 0;
+            padding: 30px;
+            color: #333;
+        }
+
+        .container {
+            max-width: 650px;
+            margin: auto;
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px #00000012;
+        }
+
+        h1 {
+            color: #17365d;
+        }
+
+        label {
+            display: block;
+            font-weight: bold;
+            margin: 15px 0 6px;
+        }
+
+        input, select {
+            width: 100%;
+            box-sizing: border-box;
+            padding: 11px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        button, .back-btn {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 11px 16px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            text-decoration: none;
+        }
+
+        button {
+            background: #1769aa;
+            color: white;
+        }
+
+        .back-btn {
+            background: #ddd;
+            color: #222;
+            margin-left: 8px;
+        }
+
+        .error {
+            display: block;
+            color: #d00000;
+            font-size: 13px;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+
+<body>
+<div class="container">
+
+    <h1>Edit Employee</h1>
+    <p>Update the employee details below.</p>
+
+    <form th:action="@{/employees/{id}/update(id=${employee.id})}"
+          th:object="${employee}"
+          method="post">
+
+        <label for="fullName">Full Name</label>
+        <input type="text" id="fullName"
+               th:field="*{fullName}">
+        <span class="error"
+              th:if="${#fields.hasErrors('fullName')}"
+              th:errors="*{fullName}"></span>
+
+        <label for="email">Email</label>
+        <input type="email" id="email"
+               th:field="*{email}">
+        <span class="error"
+              th:if="${#fields.hasErrors('email')}"
+              th:errors="*{email}"></span>
+
+        <label for="phone">Phone Number</label>
+        <input type="text" id="phone"
+               th:field="*{phone}">
+        <span class="error"
+              th:if="${#fields.hasErrors('phone')}"
+              th:errors="*{phone}"></span>
+
+        <label for="department">Department</label>
+        <select id="department" th:field="*{department}">
+            <option value="">Select Department</option>
+            <option value="HR">HR</option>
+            <option value="IT">IT</option>
+            <option value="Finance">Finance</option>
+            <option value="Marketing">Marketing</option>
+            <option value="Sales">Sales</option>
+            <option value="Operations">Operations</option>
+        </select>
+        <span class="error"
+              th:if="${#fields.hasErrors('department')}"
+              th:errors="*{department}"></span>
+
+        <label for="salary">Salary</label>
+        <input type="number" id="salary"
+               th:field="*{salary}"
+               min="0.01" step="0.01">
+        <span class="error"
+              th:if="${#fields.hasErrors('salary')}"
+              th:errors="*{salary}"></span>
+
+        <button type="submit">Update Employee</button>
+
+        <a class="back-btn" th:href="@{/employees}">
+            Cancel
+        </a>
+    </form>
+
+</div>
+</body>
+</html>
